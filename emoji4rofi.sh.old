@@ -2,20 +2,24 @@
 
 db="$(dirname $0)/emoji.db"
 if [ ! -f $db ]; then
-	"$(dirname $0)/genEmojiDB.sh"
+	frece init "$(dirname $0)/emoji.db" "$(dirname $0)/emoji.txt"
 fi
 
 if [[ -z "$@" ]]; then
-	#frece print "$db" | perl -e 's/-/ \\U/g'
-	for line in $(frece print "$db"); do
-		echo -ne $(echo $line | sed -e 's/-/ \\U/g' -e 's/^/\\U/g' -E)
-		echo -ne "\t"
-		#look $line $(dirname $0)/emoji.txt | awk -F ';' '{print $3}';
-		look $line $(dirname $0)/emoji.txt | sed 's/^[^;]*;[^;]*;//g'
-	done
+	frece print "$db" 
 else
 	frece increment "$db" "$@"
-
-	exit
+	emo=$(echo "$@" | awk '{print $1}')
+	echo $emo | xsel --input --primary
+	#(sleep 1s; xdotool type --clearmodifiers "$emo") &
+	#(sleep 5s; notify-send "hello") &
+	#xdotool type --clearmodifiers "$emo"
+	#~/git/rofi-scripts/type.sh &
+	#sleep .1 && xdotool type --clearmodifiers --delay
+	winid=$(~/git/rofi-scripts/recentWindows.sh | head -n 1\
+		| awk -F ' ' '{print $1}')
+	echo $winid > /tmp/winid
+	echo "$emo" > /tmp/typed
+	xdotool type --window $winid --clearmodifiers "$emo" --delay 1000ms
 fi
 
