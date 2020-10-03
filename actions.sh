@@ -5,6 +5,8 @@ if [[ -z "$@" ]]; then
 	echo reboot
 	echo hibernate
 	echo suspend
+elif [[ "$@" == confirm* ]]; then
+	systemctl $(echo $@ | awk '{print $2}')
 else
-	systemctl $@
+	echo "confirm $@"
 fi
