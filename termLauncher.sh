@@ -13,4 +13,4 @@ folders=$(
 echo "before sorting:" > /tmp/folders
 echo $folders >> /tmp/folders
 
-termite -d $(echo "$folders" | tr '?' '\n' | sort -u | rofi -dmenu | sed -e "s?~?$HOME?g")
+termite -d $(echo "$folders" | tr '?' '\n' | sort -u | awk NF | rofi -dmenu | sed -e "s?~?$HOME?g")
